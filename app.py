@@ -69,7 +69,7 @@ def claim_nft(w3: web3.Web3, account: eth_account.signers.local.LocalAccount):
     transaction = {
         'to': CONTRACT_ADDRESS,
         'value': 0,
-        'gas': 3000000,
+        'gas': 300000,
         'gasPrice': w3.to_wei('0.02', 'gwei'),
         'nonce': nonce,
         'data': CONTRACT_METHOD,
