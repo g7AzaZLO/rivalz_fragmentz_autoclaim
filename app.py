@@ -66,21 +66,23 @@ def check_eth_balance(w3: web3.Web3, account: eth_account.signers.local.LocalAcc
 
 def claim_nft(w3: web3.Web3, account: eth_account.signers.local.LocalAccount):
     nonce = w3.eth.get_transaction_count(account.address)
+    gas_price = w3.eth.gas_price
     transaction = {
         'to': CONTRACT_ADDRESS,
         'value': 0,
-        'gas': 300000,
-        'gasPrice': w3.to_wei('0.02', 'gwei'),
-        'nonce': nonce,
         'data': CONTRACT_METHOD,
-        'chainId': CHAIN_ID
+        'chainId': CHAIN_ID,
+        'nonce': nonce
     }
     try:
+        gas_limit = w3.eth.estimate_gas(transaction)
+        transaction['gas'] = gas_limit
+        transaction['gasPrice'] = gas_price
         signed_txn = w3.eth.account.sign_transaction(transaction, account.key)
         tx_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
         print(f"NFT claim hash: {tx_hash.hex()}")
     except Exception as e:
-        print(e)
+        print(f"Ошибка при выполнении транзакции: {e}")
 
 
 def main() -> None:
