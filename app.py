@@ -24,6 +24,7 @@ def menu() -> int:
         print("""
 1) Ввести свою  сид-фразу
 2) Сгенерировать и использовать новый кошелек
+3) Использовать приватный ключ
         """)
         x = input("-> ")
     return int(x)
@@ -35,6 +36,19 @@ def get_account_from_seed(w3: web3.Web3) -> eth_account.signers.local.LocalAccou
     phrase = input("-> ")
     try:
         account = w3.eth.account.from_mnemonic(phrase)
+        print(f"Адрес вашего кошелька: {account.address}")
+        return account
+    except Exception as e:
+        print(e)
+        main()
+
+
+def get_account_from_pk(w3: web3.Web3) -> eth_account.signers.local.LocalAccount:
+    w3.eth.account.enable_unaudited_hdwallet_features()
+    print("Введите ваш приватный ключ")
+    pk = input("-> ")
+    try:
+        account = w3.eth.account.from_key(pk)
         print(f"Адрес вашего кошелька: {account.address}")
         return account
     except Exception as e:
@@ -66,18 +80,25 @@ def check_eth_balance(w3: web3.Web3, account: eth_account.signers.local.LocalAcc
 
 def claim_nft(w3: web3.Web3, account: eth_account.signers.local.LocalAccount):
     nonce = w3.eth.get_transaction_count(account.address)
+
+    # Автоматический расчет цены газа
     gas_price = w3.eth.gas_price
+
+    # Фиксированный лимит газа, как было изначально
+    gas_limit = 300000
+    gas = w3.eth.gas
+
     transaction = {
         'to': CONTRACT_ADDRESS,
         'value': 0,
+        'gas': gas_limit,
+        'gasPrice': gas_price,
+        'nonce': nonce,
         'data': CONTRACT_METHOD,
-        'chainId': CHAIN_ID,
-        'nonce': nonce
+        'chainId': CHAIN_ID
     }
+
     try:
-        gas_limit = w3.eth.estimate_gas(transaction)
-        transaction['gas'] = gas_limit
-        transaction['gasPrice'] = gas_price
         signed_txn = w3.eth.account.sign_transaction(transaction, account.key)
         tx_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
         print(f"NFT claim hash: {tx_hash.hex()}")
@@ -93,6 +114,9 @@ def main() -> None:
             check_eth_balance(w3, account)
         elif choice == 2:
             account = generate_account(w3)
+            check_eth_balance(w3, account)
+        elif choice == 3:
+            account = get_account_from_pk(w3)
             check_eth_balance(w3, account)
         while True:
             print("Начинаем клейм")
