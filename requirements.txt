@@ -1,1 +1,1 @@
-web3~=6.20.1
+web3automatization==0.0.4
