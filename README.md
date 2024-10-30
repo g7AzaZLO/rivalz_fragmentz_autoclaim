@@ -29,7 +29,8 @@ https://rivalz2.hub.caldera.xyz/ - кран</br>
 Перерыв между пачками клеймов = 12-12.5 часов</br>
 Перерыв между самими клеймами от 5 до 15 секунд</br>
 
-Чтобы выйти из screen сесии и не прервать работу скрипта. Жмем ctrl+a, после чего D</br>
+Чтобы выйти из screen сесcии и не прервать работу скрипта. Жмем ctrl+a, после чего D</br>
+Чтобы зайти в screen сессию с сриптом <code>screen -r rivalz_auto_claim</code>
 
 https://t.me/g7monitor - группа G7</br>
 https://t.me/g7team_chat - чат G7</br>
